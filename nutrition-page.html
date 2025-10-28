@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detailed nutrition data for healthy recipes, including calories, protein, carbs and more.">
+  <title>Nutrition Transparent | Light Bites</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    /* 主页面样式 */
+    .nutrition-portal {
+      background-color: #f0f7ff;
+      border-radius: 12px;
+      padding: 3rem;
+      margin: 2rem 0;
+      text-align: center;
+      border: 1px solid #e0eefd;
+    }
+    
+    .nutrition-portal h2 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+    
+    .nutrition-portal p {
+      color: #7f8c8d;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .enter-btn {
+      display: inline-block;
+      background-color: #3498db;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    }
+    
+    .enter-btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(52, 152, 219, 0.3);
+    }
+    
+    /* 食物营养信息子页面样式 */
+    .food-nutrition-page {
+      display: none;
+    }
+    
+    .food-nutrition-page.active {
+      display: block;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: #3498db;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .back-link:hover {
+      color: #2980b9;
+    }
+    
+    .back-link svg {
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    
+    /* 食物营养信息模块样式 */
+    .food-nutrition-section {
+      padding: 4rem 2rem;
+      background-color: #f9f9f9;
+      margin: 3rem 0;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-header h2 {
+      font-size: 2.2rem;
+      color: #2c3e50;
+      margin-bottom: 0.8rem;
+    }
+    
+    .section-header p {
+      color: #7f8c8d;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .food-categories {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      background: none;
+      border: 2px solid #3498db;
+      color: #3498db;
+      padding: 0.6rem 1.5rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .category-btn.active {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .category-btn:hover:not(.active) {
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+    
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .food-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .food-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .food-image {
+      height: 200px;
+      overflow: hidden;
+    }
+    
+    .food-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .food-card:hover .food-image img {
+      transform: scale(1.05);
+    }
+    
+    .food-info {
+      padding: 1.5rem;
+    }
+    
+    .food-name {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+    
+    .food-category {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      background-color: #f1f1f1;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    
+    .quick-nutrition {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    
+    .quick-nutrition div {
+      text-align: center;
+    }
+    
+    .quick-nutrition .value {
+      font-weight: 700;
+      color: #3498db;
+    }
+    
+    .quick-nutrition .label {
+      color: #7f8c8d;
+      font-size: 0.8rem;
+    }
+    
+    /* 营养详情弹窗样式 */
+    .nutrition-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .nutrition-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(30px);
+      transition: transform 0.3s ease;
+    }
+    
+    .nutrition-modal.active .modal-content {
+      transform: translateY(0);
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: color 0.3s ease;
+      z-index: 10;
+    }
+    
+    .close-modal:hover {
+      color: #e74c3c;
+    }
+    
+    .modal-header {
+      height: 300px;
+      position: relative;
+    }
+    
+    .modal-header img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .modal-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+    
+    .modal-title {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      color: white;
+      z-index: 5;
+    }
+    
+    .modal-title h3 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .modal-title p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    .modal-body {
+      padding: 2rem;
+    }
+    
+    .nutrition-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .nutrition-details {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .nutrition-charts {
+      margin-bottom: 2rem;
+    }
+    
+    .chart-container {
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-container h4 {
+      margin-bottom: 0.8rem;
+      color: #2c3e50;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 1s ease;
+    }
+    
+    .protein-fill {
+      background-color: #2ecc71;
+    }
+    
+    .carbs-fill {
+      background-color: #3498db;
+    }
+    
+    .fat-fill {
+      background-color: #f39c12;
+    }
+    
+    .fiber-fill {
+      background-color: #9b59b6;
+    }
+    
+    .nutrition-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .nutrition-table th,
+    .nutrition-table td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    
+    .nutrition-table th {
+      color: #7f8c8d;
+      font-weight: 600;
+    }
+    
+    .daily-value {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="header-content">
+        <div class="brand">
+          <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          </div>
+          <h2 class="brand-title">Light Bites & <span>Bright Moments</span></h2>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="nutrition-page.html" class="nav-link">Nutrition</a></li>
+          <li class="nav-item"><a href="recipes-page.html" class="nav-link">Recipes</a></li>
+          <li class="nav-item"><a href="moments-page.html" class="nav-link">Moments</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="inner-page">
+    <div class="inner-hero">
+      <h1>Nutrition Transparent: Bites with Data</h1>
+      <p>Every ingredient, every meal, broken down into precise numbers.</p>
+    </div>
+
+    <div class="content-section">
+      <div class="content-image">
+        <img src="public/images/Nu.jpg" alt="Nutrition charts and ingredients">
+      </div>
+      
+      <div class="content-text">
+        <h2>Why Nutrition Data Matters</h2>
+        <p>When aiming for fat loss or balanced nutrition, guesswork can derail progress. Our recipes come with lab-verified nutrition data to help you track:</p>
+        
+        <ul class="nutrition-list">
+          <li><strong>Calories</strong>: Precise per-serving counts to align with your daily goals.</li>
+          <li><strong>Macronutrients</strong>: Protein, carbs, and healthy fats in optimal ratios.</li>
+          <li><strong>Micronutrients</strong>: Vitamins (A, C, D) and minerals (iron, calcium) for overall health.</li>
+          <li><strong>Fiber & Sugar</strong>: Hidden sugars and gut-friendly fiber content.</li>
+        </ul>
+
+        <h3>How We Calculate</h3>
+        <p>Our data is sourced from USDA food databases and cross-checked with professional nutritionists. We account for portion sizes and cooking methods to ensure accuracy.</p>
+        
+        <div class="nutrition-chart">
+          <h4>Sample Meal Breakdown (Grilled Chicken Salad)</h4>
+          <div class="chart-placeholder">
+            <div class="chart-bar protein">Protein: 35g</div>
+            <div class="chart-bar carbs">Carbs: 22g</div>
+            <div class="chart-bar fats">Fats: 8g</div>
+            <div class="chart-bar calories">Calories: 320</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 食物营养数据入口 - 在主nutrition页面显示 -->
+    <div class="nutrition-portal" id="nutritionPortal">
+      <h2>Food Nutrition Database</h2>
+      <p>Explore our comprehensive database of food nutrition information. Find detailed nutritional breakdowns for hundreds of foods, including calories, protein, fats, vitamins and minerals.</p>
+      <a href="#" class="enter-btn" id="enterFoodDB">Explore Food Nutrition Data</a>
+    </div>
+
+    <!-- 食物营养信息子页面 - 默认隐藏，点击入口后显示 -->
+    <div class="food-nutrition-page" id="foodNutritionPage">
+      <a href="#" class="back-link" id="backToMain">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Back to Nutrition Main Page
+      </a>
+      
+      <section class="food-nutrition-section">
+        <div class="section-header">
+          <h2>Food Nutrition Information</h2>
+          <p>Explore detailed nutritional data for various foods. Click on any food to see comprehensive breakdowns of calories, proteins, fats, and more.</p>
+        </div>
+        
+        <!-- 食物分类筛选 -->
+        <div class="food-categories">
+          <button class="category-btn active" data-category="all">All Foods</button>
+          <button class="category-btn" data-category="protein">Protein Sources</button>
+          <button class="category-btn" data-category="grains">Grains & Carbs</button>
+          <button class="category-btn" data-category="fruits">Fruits</button>
+          <button class="category-btn" data-category="vegetables">Vegetables</button>
+          <button class="category-btn" data-category="dairy">Dairy</button>
+        </div>
+        
+        <!-- 食物卡片网格 -->
+        <div class="food-grid" id="foodGrid">
+          <!-- 食物卡片将通过JavaScript动态生成 -->
+        </div>
+      </section>
+    </div>
+
+    <div class="related-section">
+      <h3>Related Nutrition Guides</h3>
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <img src="public/images/portion.jpg" alt="Protein sources">
+          <h4>Best Plant-Based Protein Sources</h4>
+        </a>
+        <a href="#" class="related-card">
+          <img src="public/images/carbon.jpg" alt="Carbohydrates">
+          <h4>Complex Carbs for Sustained Energy</h4>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- 营养详情弹窗 -->
+  <div class="nutrition-modal" id="nutritionModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <div class="modal-header">
+        <img src="" alt="" id="modalImage">
+        <div class="modal-title">
+          <h3 id="modalFoodName"></h3>
+          <p id="modalFoodCategory"></p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="nutrition-details">
+          <div class="nutrition-charts">
+            <div class="chart-container">
+              <h4>Macronutrient Distribution</h4>
+              <div class="progress-bar">
+                <div class="progress-fill protein-fill" id="proteinBar"></div>
+              </div>
+              <div class="chart-info">Protein: <span id="proteinValue">0g</span> (<span id="proteinPercent">0</span>%)</div>
+              
+              <div class="progress-bar">
+                <div class="progress-fill carbs-fill" id="carbsBar"></div>
+              </div>
+              <div class="chart-info">Carbohydrates: <span id="carbsValue">0g</span> (<span id="carbsPercent">0</span>%)</div>
+              
+              <div class="progress-bar">
+                <div class="progress-fill fat-fill" id="fatBar"></div>
+              </div>
+              <div class="chart-info">Fat: <span id="fatValue">0g</span> (<span id="fatPercent">0</span>%)</div>
+              
+              <div class="progress-bar">
+                <div class="progress-fill fiber-fill" id="fiberBar"></div>
+              </div>
+              <div class="chart-info">Fiber: <span id="fiberValue">0g</span></div>
+            </div>
+          </div>
+          
+          <div class="nutrition-facts">
+            <h4>Nutrition Facts (per 100g)</h4>
+            <table class="nutrition-table">
+              <tr>
+                <th>Calories</th>
+                <td id="caloriesValue">0 kcal</td>
+              </tr>
+              <tr>
+                <th>Protein</th>
+                <td id="tableProtein">0g</td>
+              </tr>
+              <tr>
+                <th>Total Fat</th>
+                <td id="tableFat">0g</td>
+              </tr>
+              <tr>
+                <th>Saturated Fat</th>
+                <td id="saturatedFat">0g <span class="daily-value">(% DV)</span></td>
+              </tr>
+              <tr>
+                <th>Carbohydrates</th>
+                <td id="tableCarbs">0g</td>
+              </tr>
+              <tr>
+                <th>Sugars</th>
+                <td id="sugars">0g</td>
+              </tr>
+              <tr>
+                <th>Fiber</th>
+                <td id="tableFiber">0g <span class="daily-value">(% DV)</span></td>
+              </tr>
+              <tr>
+                <th>Sodium</th>
+                <td id="sodium">0mg <span class="daily-value">(% DV)</span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="vitamins-minerals">
+          <h4>Key Vitamins & Minerals</h4>
+          <table class="nutrition-table">
+            <tr>
+              <th>Vitamin A</th>
+              <td id="vitaminA"><span class="daily-value">0% DV</span></td>
+            </tr>
+            <tr>
+              <th>Vitamin C</th>
+              <td id="vitaminC"><span class="daily-value">0% DV</span></td>
+            </tr>
+            <tr>
+              <th>Calcium</th>
+              <td id="calcium"><span class="daily-value">0% DV</span></td>
+            </tr>
+            <tr>
+              <th>Iron</th>
+              <td id="iron"><span class="daily-value">0% DV</span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-container">
+      <h3>About Light Bites & Bright Moments</h3>
+      <p>We are dedicated to providing visualized, science-backed fat-loss meal recipes, making healthy eating easy and enjoyable.</p>
+    </div>
+  </footer>
+
+  <script>
+    // 页面切换功能
+    const nutritionPortal = document.getElementById('nutritionPortal');
+    const foodNutritionPage = document.getElementById('foodNutritionPage');
+    const enterFoodDB = document.getElementById('enterFoodDB');
+    const backToMain = document.getElementById('backToMain');
+    const relatedSection = document.querySelector('.related-section');
+    
+    // 点击进入食物数据库
+    enterFoodDB.addEventListener('click', (e) => {
+      e.preventDefault();
+      nutritionPortal.style.display = 'none';
+      relatedSection.style.display = 'none';
+      foodNutritionPage.classList.add('active');
+      // 生成食物卡片
+      generateFoodCards();
+    });
+    
+    // 返回主页面
+    backToMain.addEventListener('click', (e) => {
+      e.preventDefault();
+      foodNutritionPage.classList.remove('active');
+      nutritionPortal.style.display = 'block';
+      relatedSection.style.display = 'block';
+      // 清空食物卡片，避免重复生成
+      document.getElementById('foodGrid').innerHTML = '';
+    });
+
+    // 食物营养数据库（每个类别至少10种食物）
+    const foodNutritionData = {
+      // 蛋白质类（12种）
+      chicken_breast: {
+        name: "Grilled Chicken Breast",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Grilled Chicken Breast.jpg",
+        calories: 165,
+        protein: 31,
+        fat: 3.6,
+        saturatedFat: 1,
+        carbs: 0,
+        sugars: 0,
+        fiber: 0,
+        sodium: 74,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 4
+      },
+      salmon: {
+        name: "Salmon Fillet",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Salmon Fillet.jpg",
+        calories: 206,
+        protein: 22,
+        fat: 13,
+        saturatedFat: 2.3,
+        carbs: 0,
+        sugars: 0,
+        fiber: 0,
+        sodium: 50,
+        vitaminA: 12,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 3
+      },
+      turkey: {
+        name: "Turkey Breast",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Turkey Breast.jpg",
+        calories: 135,
+        protein: 29,
+        fat: 1.8,
+        saturatedFat: 0.5,
+        carbs: 0,
+        sugars: 0,
+        fiber: 0,
+        sodium: 68,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 3
+      },
+      beef_lean: {
+        name: "Lean Beef",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Lean Beef.jpg",
+        calories: 250,
+        protein: 26,
+        fat: 17,
+        saturatedFat: 6.3,
+        carbs: 0,
+        sugars: 0,
+        fiber: 0,
+        sodium: 65,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 20
+      },
+      eggs: {
+        name: "Whole Eggs",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Whole Eggs.jpg",
+        calories: 155,
+        protein: 13,
+        fat: 11,
+        saturatedFat: 3.6,
+        carbs: 1.1,
+        sugars: 1.1,
+        fiber: 0,
+        sodium: 124,
+        vitaminA: 10,
+        vitaminC: 0,
+        calcium: 5,
+        iron: 6
+      },
+      tofu: {
+        name: "Firm Tofu",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Firm Tofu.jpg",
+        calories: 76,
+        protein: 8,
+        fat: 4.5,
+        saturatedFat: 0.7,
+        carbs: 2,
+        sugars: 0.7,
+        fiber: 1.5,
+        sodium: 11,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 17,
+        iron: 15
+      },
+      lentils: {
+        name: "Cooked Lentils",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Cooked Lentils.jpg",
+        calories: 116,
+        protein: 9,
+        fat: 0.4,
+        saturatedFat: 0.1,
+        carbs: 20,
+        sugars: 1.8,
+        fiber: 8,
+        sodium: 6,
+        vitaminA: 0,
+        vitaminC: 4,
+        calcium: 3,
+        iron: 35
+      },
+      chickpeas: {
+        name: "Cooked Chickpeas",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Cooked Chickpeas.jpg",
+        calories: 164,
+        protein: 7.3,
+        fat: 2.6,
+        saturatedFat: 0.4,
+        carbs: 27,
+        sugars: 4.8,
+        fiber: 6,
+        sodium: 9,
+        vitaminA: 0,
+        vitaminC: 4,
+        calcium: 5,
+        iron: 15
+      },
+      Greek_yogurt: {
+        name: "Greek Yogurt",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Greek Yogurt.jpg",
+        calories: 59,
+        protein: 10,
+        fat: 0.4,
+        saturatedFat: 0.3,
+        carbs: 3.6,
+        sugars: 3.6,
+        fiber: 0,
+        sodium: 39,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 10,
+        iron: 0
+      },
+      almonds: {
+        name: "Almonds",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Almonds.jpg",
+        calories: 579,
+        protein: 21,
+        fat: 49,
+        saturatedFat: 3.7,
+        carbs: 20,
+        sugars: 4.3,
+        fiber: 12,
+        sodium: 1,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 26,
+        iron: 20
+      },
+      peanut_butter: {
+        name: "Natural Peanut Butter",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Natural Peanut Butter.jpg",
+        calories: 588,
+        protein: 25,
+        fat: 49,
+        saturatedFat: 6.2,
+        carbs: 20,
+        sugars: 6,
+        fiber: 8,
+        sodium: 189,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 14,
+        iron: 20
+      },
+      shrimp: {
+        name: "Cooked Shrimp",
+        category: "Protein Source",
+        categoryId: "protein",
+        image: "public/images/Cooked Shrimp.jpg",
+        calories: 99,
+        protein: 24,
+        fat: 0.3,
+        saturatedFat: 0.1,
+        carbs: 0,
+        sugars: 0,
+        fiber: 0,
+        sodium: 111,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 2
+      },
+
+      // 谷物与碳水类（12种）
+      quinoa: {
+        name: "Cooked Quinoa",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Quinoa.jpg",
+        calories: 120,
+        protein: 4.4,
+        fat: 2.1,
+        saturatedFat: 0.3,
+        carbs: 21.3,
+        sugars: 0.7,
+        fiber: 2.8,
+        sodium: 13,
+        vitaminA: 0,
+        vitaminC: 8,
+        calcium: 1,
+        iron: 15
+      },
+      brown_rice: {
+        name: "Cooked Brown Rice",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Brown Rice.jpg",
+        calories: 112,
+        protein: 2.6,
+        fat: 0.9,
+        saturatedFat: 0.2,
+        carbs: 23.5,
+        sugars: 0.8,
+        fiber: 1.8,
+        sodium: 10,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 0,
+        iron: 5
+      },
+      oats: {
+        name: "Cooked Oats",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Oats.jpg",
+        calories: 68,
+        protein: 2.5,
+        fat: 1.5,
+        saturatedFat: 0.2,
+        carbs: 12,
+        sugars: 0.6,
+        fiber: 2,
+        sodium: 2,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 2,
+        iron: 10
+      },
+      whole_wheat_bread: {
+        name: "Whole Wheat Bread",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Whole Wheat Bread.webp",
+        calories: 80,
+        protein: 4,
+        fat: 1.5,
+        saturatedFat: 0.3,
+        carbs: 15,
+        sugars: 1.5,
+        fiber: 2,
+        sodium: 148,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 7,
+        iron: 8
+      },
+      sweet_potato: {
+        name: "Baked Sweet Potato",
+        category: "Carbohydrate",
+        categoryId: "grains",
+        image: "public/images/Baked Sweet Potato.jpg",
+        calories: 90,
+        protein: 2,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 21,
+        sugars: 4.2,
+        fiber: 3,
+        sodium: 55,
+        vitaminA: 14187,
+        vitaminC: 21,
+        calcium: 3,
+        iron: 2
+      },
+      white_rice: {
+        name: "Cooked White Rice",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked White Rice.webp",
+        calories: 130,
+        protein: 2.4,
+        fat: 0.3,
+        saturatedFat: 0.1,
+        carbs: 28.7,
+        sugars: 0.1,
+        fiber: 0.4,
+        sodium: 1,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 0,
+        iron: 1
+      },
+      barley: {
+        name: "Cooked Barley",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Barley.jpg",
+        calories: 123,
+        protein: 2.3,
+        fat: 0.4,
+        saturatedFat: 0.1,
+        carbs: 27,
+        sugars: 0.8,
+        fiber: 3.5,
+        sodium: 2,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 6
+      },
+      buckwheat: {
+        name: "Cooked Buckwheat",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Buckwheat.jpg",
+        calories: 110,
+        protein: 4.1,
+        fat: 1.4,
+        saturatedFat: 0.3,
+        carbs: 21.3,
+        sugars: 1.1,
+        fiber: 2.7,
+        sodium: 5,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 8
+      },
+      pasta_wheat: {
+        name: "Whole Wheat Pasta",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Whole Wheat Pasta.jpg",
+        calories: 174,
+        protein: 7.5,
+        fat: 1.8,
+        saturatedFat: 0.4,
+        carbs: 34,
+        sugars: 1.6,
+        fiber: 6,
+        sodium: 2,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 1,
+        iron: 15
+      },
+      corn: {
+        name: "Cooked Corn",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Corn.webp",
+        calories: 88,
+        protein: 3.2,
+        fat: 1.1,
+        saturatedFat: 0.2,
+        carbs: 19,
+        sugars: 3.2,
+        fiber: 2.7,
+        sodium: 2,
+        vitaminA: 10,
+        vitaminC: 8,
+        calcium: 0,
+        iron: 3
+      },
+      couscous: {
+        name: "Cooked Couscous",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Cooked Couscous.webp",
+        calories: 112,
+        protein: 3.8,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 23.2,
+        sugars: 0.1,
+        fiber: 1.1,
+        sodium: 11,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 0,
+        iron: 5
+      },
+      rye_bread: {
+        name: "Rye Bread",
+        category: "Grain",
+        categoryId: "grains",
+        image: "public/images/Rye Bread.jpg",
+        calories: 90,
+        protein: 3.7,
+        fat: 1.5,
+        saturatedFat: 0.3,
+        carbs: 17,
+        sugars: 1.8,
+        fiber: 2.7,
+        sodium: 335,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 11,
+        iron: 15
+      },
+
+      // 水果类（12种）
+      apple: {
+        name: "Fresh Apple",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Apple.jpg",
+        calories: 52,
+        protein: 0.3,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 14,
+        sugars: 10.4,
+        fiber: 2.4,
+        sodium: 1,
+        vitaminA: 2,
+        vitaminC: 8,
+        calcium: 1,
+        iron: 0.3
+      },
+      banana: {
+        name: "Fresh Banana",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Banana.jpg",
+        calories: 89,
+        protein: 1.1,
+        fat: 0.3,
+        saturatedFat: 0.1,
+        carbs: 22.8,
+        sugars: 12.2,
+        fiber: 2.6,
+        sodium: 1,
+        vitaminA: 1,
+        vitaminC: 14,
+        calcium: 5,
+        iron: 0.3
+      },
+      orange: {
+        name: "Fresh Orange",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Orange.jpg",
+        calories: 47,
+        protein: 0.9,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 11.7,
+        sugars: 9.1,
+        fiber: 2.4,
+        sodium: 1,
+        vitaminA: 1,
+        vitaminC: 51,
+        calcium: 4,
+        iron: 0.1
+      },
+      strawberry: {
+        name: "Fresh Strawberries",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Strawberries.jpg",
+        calories: 32,
+        protein: 0.7,
+        fat: 0.3,
+        saturatedFat: 0,
+        carbs: 7.7,
+        sugars: 4.9,
+        fiber: 2,
+        sodium: 1,
+        vitaminA: 1,
+        vitaminC: 89,
+        calcium: 16,
+        iron: 0.4
+      },
+      blueberry: {
+        name: "Fresh Blueberries",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Blueberries.jpg",
+        calories: 57,
+        protein: 0.7,
+        fat: 0.3,
+        saturatedFat: 0,
+        carbs: 14.5,
+        sugars: 10,
+        fiber: 2.4,
+        sodium: 1,
+        vitaminA: 3,
+        vitaminC: 14,
+        calcium: 6,
+        iron: 0.3
+      },
+      mango: {
+        name: "Fresh Mango",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Mango.jpg",
+        calories: 60,
+        protein: 0.8,
+        fat: 0.4,
+        saturatedFat: 0.1,
+        carbs: 15,
+        sugars: 13.7,
+        fiber: 1.6,
+        sodium: 1,
+        vitaminA: 765,
+        vitaminC: 45,
+        calcium: 11,
+        iron: 0.3
+      },
+      pineapple: {
+        name: "Fresh Pineapple",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Pineapple.jpg",
+        calories: 50,
+        protein: 0.5,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 13,
+        sugars: 9.9,
+        fiber: 1.4,
+        sodium: 1,
+        vitaminA: 2,
+        vitaminC: 58,
+        calcium: 13,
+        iron: 0.3
+      },
+      grapes: {
+        name: "Fresh Grapes",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Grapes.jpg",
+        calories: 69,
+        protein: 0.7,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 18,
+        sugars: 15.5,
+        fiber: 0.9,
+        sodium: 2,
+        vitaminA: 1,
+        vitaminC: 10,
+        calcium: 10,
+        iron: 0.3
+      },
+      watermelon: {
+        name: "Fresh Watermelon",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Watermelon.jpg",
+        calories: 30,
+        protein: 0.6,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 7.6,
+        sugars: 6.2,
+        fiber: 0.4,
+        sodium: 1,
+        vitaminA: 58,
+        vitaminC: 12,
+        calcium: 7,
+        iron: 0.2
+      },
+      kiwi: {
+        name: "Fresh Kiwi",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Kiwi.jpg",
+        calories: 61,
+        protein: 1.1,
+        fat: 0.5,
+        saturatedFat: 0.1,
+        carbs: 14.7,
+        sugars: 8.9,
+        fiber: 2.6,
+        sodium: 3,
+        vitaminA: 1,
+        vitaminC: 84,
+        calcium: 34,
+        iron: 0.3
+      },
+      avocado: {
+        name: "Fresh Avocado",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Avocado.jpg",
+        calories: 160,
+        protein: 2,
+        fat: 15,
+        saturatedFat: 2.1,
+        carbs: 9,
+        sugars: 0.7,
+        fiber: 7,
+        sodium: 7,
+        vitaminA: 18,
+        vitaminC: 17,
+        calcium: 12,
+        iron: 0.6
+      },
+      pear: {
+        name: "Fresh Pear",
+        category: "Fruit",
+        categoryId: "fruits",
+        image: "public/images/Fresh Pear.jpg",
+        calories: 57,
+        protein: 0.4,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 15,
+        sugars: 9.8,
+        fiber: 3.1,
+        sodium: 1,
+        vitaminA: 1,
+        vitaminC: 4,
+        calcium: 9,
+        iron: 0.1
+      },
+
+      // 蔬菜类（12种）
+      spinach: {
+        name: "Fresh Spinach",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Spinach.jpg",
+        calories: 23,
+        protein: 2.9,
+        fat: 0.4,
+        saturatedFat: 0.1,
+        carbs: 3.6,
+        sugars: 0.4,
+        fiber: 2.2,
+        sodium: 79,
+        vitaminA: 188,
+        vitaminC: 28,
+        calcium: 10,
+        iron: 15
+      },
+      broccoli: {
+        name: "Fresh Broccoli",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Broccoli.jpg",
+        calories: 34,
+        protein: 2.8,
+        fat: 0.4,
+        saturatedFat: 0.1,
+        carbs: 7,
+        sugars: 1.7,
+        fiber: 2.6,
+        sodium: 33,
+        vitaminA: 12,
+        vitaminC: 135,
+        calcium: 47,
+        iron: 0.7
+      },
+      carrots: {
+        name: "Fresh Carrots",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Carrots.jpg",
+        calories: 41,
+        protein: 0.9,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 9.6,
+        sugars: 4.7,
+        fiber: 2.8,
+        sodium: 69,
+        vitaminA: 1403,
+        vitaminC: 5,
+        calcium: 33,
+        iron: 0.3
+      },
+      bell_pepper: {
+        name: "Bell Pepper",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Bell Pepper.jpg",
+        calories: 20,
+        protein: 0.9,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 4.6,
+        sugars: 2.4,
+        fiber: 1.8,
+        sodium: 3,
+        vitaminA: 317,
+        vitaminC: 190,
+        calcium: 10,
+        iron: 0.3
+      },
+      cucumber: {
+        name: "Fresh Cucumber",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Cucumber.jpg",
+        calories: 16,
+        protein: 0.7,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 3.6,
+        sugars: 1.7,
+        fiber: 0.5,
+        sodium: 2,
+        vitaminA: 10,
+        vitaminC: 3,
+        calcium: 16,
+        iron: 0.3
+      },
+      tomatoes: {
+        name: "Fresh Tomatoes",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Tomatoes.jpg",
+        calories: 18,
+        protein: 0.9,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 3.9,
+        sugars: 2.6,
+        fiber: 1.2,
+        sodium: 5,
+        vitaminA: 42,
+        vitaminC: 17,
+        calcium: 10,
+        iron: 0.3
+      },
+      asparagus: {
+        name: "Fresh Asparagus",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Asparagus.webp",
+        calories: 20,
+        protein: 2.2,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 3.9,
+        sugars: 1.3,
+        fiber: 2.1,
+        sodium: 2,
+        vitaminA: 18,
+        vitaminC: 12,
+        calcium: 24,
+        iron: 2.1
+      },
+      cauliflower: {
+        name: "Fresh Cauliflower",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Cauliflower.webp",
+        calories: 25,
+        protein: 1.9,
+        fat: 0.3,
+        saturatedFat: 0,
+        carbs: 5,
+        sugars: 1.9,
+        fiber: 2,
+        sodium: 30,
+        vitaminA: 0,
+        vitaminC: 48,
+        calcium: 22,
+        iron: 0.4
+      },
+      zucchini: {
+        name: "Fresh Zucchini",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Zucchini.jpg",
+        calories: 17,
+        protein: 1.2,
+        fat: 0.3,
+        saturatedFat: 0,
+        carbs: 3.1,
+        sugars: 1.7,
+        fiber: 1,
+        sodium: 2,
+        vitaminA: 20,
+        vitaminC: 17,
+        calcium: 16,
+        iron: 0.3
+      },
+      Brussels_sprouts: {
+        name: "Brussels Sprouts",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Brussels Sprouts.jpg",
+        calories: 43,
+        protein: 3.4,
+        fat: 0.3,
+        saturatedFat: 0.1,
+        carbs: 8.9,
+        sugars: 2.2,
+        fiber: 3.8,
+        sodium: 20,
+        vitaminA: 15,
+        vitaminC: 81,
+        calcium: 25,
+        iron: 1.4
+      },
+      celery: {
+        name: "Fresh Celery",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Celery.webp",
+        calories: 16,
+        protein: 0.7,
+        fat: 0.2,
+        saturatedFat: 0,
+        carbs: 3,
+        sugars: 1.2,
+        fiber: 1.6,
+        sodium: 80,
+        vitaminA: 14,
+        vitaminC: 3,
+        calcium: 40,
+        iron: 0.2
+      },
+      cabbage: {
+        name: "Fresh Cabbage",
+        category: "Vegetable",
+        categoryId: "vegetables",
+        image: "public/images/Fresh Cabbage.webp",
+        calories: 25,
+        protein: 1.3,
+        fat: 0.1,
+        saturatedFat: 0,
+        carbs: 5.8,
+        sugars: 3.2,
+        fiber: 2.5,
+        sodium: 18,
+        vitaminA: 5,
+        vitaminC: 36,
+        calcium: 47,
+        iron: 0.4
+      },
+
+      // 乳制品类（10种）
+      milk_skim: {
+        name: "Skim Milk",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Skim Milk.jpg",
+        calories: 35,
+        protein: 3.4,
+        fat: 0.1,
+        saturatedFat: 0.1,
+        carbs: 5,
+        sugars: 5,
+        fiber: 0,
+        sodium: 49,
+        vitaminA: 11,
+        vitaminC: 0,
+        calcium: 12,
+        iron: 0
+      },
+      milk_whole: {
+        name: "Whole Milk",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Whole Milk.jpg",
+        calories: 64,
+        protein: 3.4,
+        fat: 3.2,
+        saturatedFat: 2,
+        carbs: 5,
+        sugars: 5,
+        fiber: 0,
+        sodium: 49,
+        vitaminA: 11,
+        vitaminC: 0,
+        calcium: 12,
+        iron: 0
+      },
+      cheddar_cheese: {
+        name: "Cheddar Cheese",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Cheddar Cheese.webp",
+        calories: 402,
+        protein: 25,
+        fat: 33,
+        saturatedFat: 21,
+        carbs: 1.3,
+        sugars: 0.5,
+        fiber: 0,
+        sodium: 621,
+        vitaminA: 20,
+        vitaminC: 0,
+        calcium: 72,
+        iron: 0.6
+      },
+      cottage_cheese: {
+        name: "Cottage Cheese",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Cottage Cheese.jpg",
+        calories: 79,
+        protein: 11,
+        fat: 2.3,
+        saturatedFat: 1.4,
+        carbs: 3.4,
+        sugars: 2.7,
+        fiber: 0,
+        sodium: 364,
+        vitaminA: 2,
+        vitaminC: 0,
+        calcium: 8,
+        iron: 0.1
+      },
+      yogurt_plain: {
+        name: "Plain Yogurt",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Plain Yogurt.webp",
+        calories: 59,
+        protein: 10,
+        fat: 0.4,
+        saturatedFat: 0.3,
+        carbs: 3.6,
+        sugars: 3.6,
+        fiber: 0,
+        sodium: 39,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 10,
+        iron: 0
+      },
+      yogurt_greek: {
+        name: "Greek Yogurt",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Greek Yogurt.jpg",
+        calories: 59,
+        protein: 10,
+        fat: 0.4,
+        saturatedFat: 0.3,
+        carbs: 3.6,
+        sugars: 3.6,
+        fiber: 0,
+        sodium: 39,
+        vitaminA: 0,
+        vitaminC: 0,
+        calcium: 10,
+        iron: 0
+      },
+      mozzarella: {
+        name: "Mozzarella Cheese",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Mozzarella Cheese.jpg",
+        calories: 280,
+        protein: 22,
+        fat: 20,
+        saturatedFat: 12.3,
+        carbs: 2.4,
+        sugars: 0.6,
+        fiber: 0,
+        sodium: 599,
+        vitaminA: 14,
+        vitaminC: 0,
+        calcium: 51,
+        iron: 0.3
+      },
+      butter: {
+        name: "Butter",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Butter.jpg",
+        calories: 717,
+        protein: 0.9,
+        fat: 80,
+        saturatedFat: 51,
+        carbs: 0.1,
+        sugars: 0.1,
+        fiber: 0,
+        sodium: 643,
+        vitaminA: 68,
+        vitaminC: 0,
+        calcium: 2,
+        iron: 0.1
+      },
+      cream_cheese: {
+        name: "Cream Cheese",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Cream Cheese.jpg",
+        calories: 349,
+        protein: 6.2,
+        fat: 34.4,
+        saturatedFat: 21.5,
+        carbs: 3.4,
+        sugars: 1.3,
+        fiber: 0,
+        sodium: 314,
+        vitaminA: 35,
+        vitaminC: 0,
+        calcium: 14,
+        iron: 0.1
+      },
+      kefir: {
+        name: "Kefir",
+        category: "Dairy",
+        categoryId: "dairy",
+        image: "public/images/Kefir.jpg",
+        calories: 59,
+        protein: 3.4,
+        fat: 0.5,
+        saturatedFat: 0.3,
+        carbs: 7.3,
+        sugars: 7.3,
+        fiber: 0,
+        sodium: 40,
+        vitaminA: 10,
+        vitaminC: 0,
+        calcium: 11,
+        iron: 0
+      }
+    };
+
+    // 动态生成食物卡片
+    function generateFoodCards() {
+      const foodGrid = document.getElementById('foodGrid');
+      // 清空网格
+      foodGrid.innerHTML = '';
+      
+      // 遍历所有食物数据
+      Object.keys(foodNutritionData).forEach(foodId => {
+        const food = foodNutritionData[foodId];
+        
+        // 创建食物卡片元素
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.setAttribute('data-category', food.categoryId);
+        card.setAttribute('data-id', foodId);
+        
+        // 设置卡片内容
+        card.innerHTML = `
+          <div class="food-image">
+            <img src="${food.image}" alt="${food.name}">
+          </div>
+          <div class="food-info">
+            <h3 class="food-name">${food.name}</h3>
+            <span class="food-category">${food.category}</span>
+            <div class="quick-nutrition">
+              <div>
+                <div class="value">${food.calories}</div>
+                <div class="label">Calories</div>
+              </div>
+              <div>
+                <div class="value">${food.protein}g</div>
+                <div class="label">Protein</div>
+              </div>
+              <div>
+                <div class="value">${food.fat}g</div>
+                <div class="label">Fat</div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 添加到网格中
+        foodGrid.appendChild(card);
+      });
+    }
+
+    // 获取DOM元素
+    const nutritionModal = document.getElementById('nutritionModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalFoodName = document.getElementById('modalFoodName');
+    const modalFoodCategory = document.getElementById('modalFoodCategory');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+
+    // 为动态生成的食物卡片添加点击事件
+    document.getElementById('foodGrid').addEventListener('click', (e) => {
+      const foodCard = e.target.closest('.food-card');
+      if (foodCard) {
+        const foodId = foodCard.getAttribute('data-id');
+        const foodData = foodNutritionData[foodId];
+        
+        if (foodData) {
+          // 填充弹窗数据
+          modalImage.src = foodData.image;
+          modalImage.alt = foodData.name;
+          modalFoodName.textContent = foodData.name;
+          modalFoodCategory.textContent = foodData.category;
+          
+          // 计算总热量占比
+          const proteinCalories = foodData.protein * 4;
+          const carbsCalories = foodData.carbs * 4;
+          const fatCalories = foodData.fat * 9;
+          const totalCalories = foodData.calories;
+          
+          const proteinPercent = totalCalories > 0 ? Math.round((proteinCalories / totalCalories) * 100) : 0;
+          const carbsPercent = totalCalories > 0 ? Math.round((carbsCalories / totalCalories) * 100) : 0;
+          const fatPercent = totalCalories > 0 ? Math.round((fatCalories / totalCalories) * 100) : 0;
+          
+          // 设置进度条
+          document.getElementById('proteinBar').style.width = `${proteinPercent}%`;
+          document.getElementById('carbsBar').style.width = `${carbsPercent}%`;
+          document.getElementById('fatBar').style.width = `${fatPercent}%`;
+          document.getElementById('fiberBar').style.width = `${Math.min(foodData.fiber * 5, 100)}%`;
+          
+          // 设置营养数据
+          document.getElementById('proteinValue').textContent = `${foodData.protein}g`;
+          document.getElementById('proteinPercent').textContent = proteinPercent;
+          document.getElementById('carbsValue').textContent = `${foodData.carbs}g`;
+          document.getElementById('carbsPercent').textContent = carbsPercent;
+          document.getElementById('fatValue').textContent = `${foodData.fat}g`;
+          document.getElementById('fatPercent').textContent = fatPercent;
+          document.getElementById('fiberValue').textContent = `${foodData.fiber}g`;
+          
+          document.getElementById('caloriesValue').textContent = `${foodData.calories} kcal`;
+          document.getElementById('tableProtein').textContent = `${foodData.protein}g`;
+          document.getElementById('tableFat').textContent = `${foodData.fat}g`;
+          document.getElementById('saturatedFat').innerHTML = `${foodData.saturatedFat}g <span class="daily-value">(${Math.round(foodData.saturatedFat * 5)}% DV)</span>`;
+          document.getElementById('tableCarbs').textContent = `${foodData.carbs}g`;
+          document.getElementById('sugars').textContent = `${foodData.sugars}g`;
+          document.getElementById('tableFiber').innerHTML = `${foodData.fiber}g <span class="daily-value">(${Math.round(foodData.fiber * 4)}% DV)</span>`;
+          document.getElementById('sodium').innerHTML = `${foodData.sodium}mg <span class="daily-value">(${Math.round(foodData.sodium / 23)}% DV)</span>`;
+          
+          document.getElementById('vitaminA').innerHTML = `<span class="daily-value">${foodData.vitaminA}% DV</span>`;
+          document.getElementById('vitaminC').innerHTML = `<span class="daily-value">${foodData.vitaminC}% DV</span>`;
+          document.getElementById('calcium').innerHTML = `<span class="daily-value">${foodData.calcium}% DV</span>`;
+          document.getElementById('iron').innerHTML = `<span class="daily-value">${foodData.iron}% DV</span>`;
+          
+          // 显示弹窗
+          nutritionModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+    });
+
+    // 关闭弹窗
+    closeModal.addEventListener('click', () => {
+      nutritionModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // 点击弹窗外部关闭弹窗
+    nutritionModal.addEventListener('click', (e) => {
+      if (e.target === nutritionModal) {
+        nutritionModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // 食物分类筛选
+    categoryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 更新按钮状态
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const category = btn.getAttribute('data-category');
+        const foodCards = document.querySelectorAll('.food-card');
+        
+        // 筛选食物卡片
+        foodCards.forEach(card => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

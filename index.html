@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A friendly guide to deliciousness. Explore our lovingly curated lists of the best fruits, pastries, curries, and veggie dishes. Find your next favorite.">
+  <title>Light Bites & Bright Moments</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico">
+</head>
+<body>
+ <header class="header">
+    <div class="header-container">
+        <div class="header-content">
+            <div class="brand">
+                <div class = "logo">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf-icon lucide-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                </div>
+                <h2 class="brand-title">Light Bites & <span>Bright Moments</span></h2>
+            </div>
+           
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Nutrition</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Moments</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div id="main-content">
+    <!-- 修复：英雄区改为背景图片叠加文字结构 -->
+    <div id="hero">
+        <div class="hero-content">
+            <h1>Nutrition-Focused Light Eats.<br/>For Your Wellness Goals.</h1>
+            <p>Welcome to Light Bites & Bright Moments, your fat-loss recipe hub. Explore our visualized, nutrition-packed meals with step-by-step guides. Filter by calories, time or diet—find your healthy favorite.</p>
+            <!-- 新增：查看完整文章按钮 -->
+            <a href="full-article.html" class="btn-read-more">Read Full Article</a>
+        </div>
+    </div>
+   
+    <div class="grid-container">
+        <!-- 修复：闭合h2标签 + 新增a标签实现点击跳转 -->
+        <a href="nutrition-page.html" class="fruit-link">
+            <div class="fruit">
+                <img src="public/images/Nutrition.jpg" alt="Nutrition" >
+                <h2>Nutrition Transparent: Bites with Data</h2>
+                <p>Precise nutrition data (calories, protein, carbs, etc.) for every meal. Visual charts make tracking intake easy.</p>
+            </div>
+        </a>
+
+        <a href="recipes-page.html" class="fruit-link">
+            <div class="fruit">
+                <img src="public/images/Visual Recipes.avif" alt="Visual Recipes"  >
+                <h2>Visual Recipes</h2>
+                <p>Step-by-step real-shot photos + concise instructions. Cooking fat-loss meals is a breeze.</p>
+            </div>
+        </a>
+
+        <a href="moments-page.html" class="fruit-link">
+            <div class="fruit">
+                <img src="public/images/Moments for Every Scene.webp" alt="Moments for Every Scene" >
+                <h2>Moments for Every Scene</h2>
+                <p>Fat-loss recipes for all daily scenes: quick breakfasts, office lunches, family dinners and more.</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 新增：页脚语义化结构 -->
+<footer id="footer">
+    <div class="footer-container">
+        <h3>About Light Bites & Bright Moments</h3>
+        <p>We are dedicated to providing visualized, science-backed fat-loss meal recipes, making healthy eating easy and enjoyable.</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

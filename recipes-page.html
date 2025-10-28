@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Step-by-step visual recipes for healthy, fat-loss meals with real photos.">
+  <title>Visual Recipes | Light Bites</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    /* 轻食菜谱模块入口样式 */
+    .light-meals-portal {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 3rem;
+      margin: 3rem 0;
+      text-align: center;
+      border: 1px solid #e9ecef;
+    }
+    
+    .light-meals-portal h2 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+    
+    .light-meals-portal p {
+      color: #7f8c8d;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .enter-recipes-btn {
+      display: inline-block;
+      background-color: #2ecc71;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+    }
+    
+    .enter-recipes-btn:hover {
+      background-color: #27ae60;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(46, 204, 113, 0.3);
+    }
+
+    /* 轻食菜谱页面样式 */
+    .light-meals-page {
+      display: none;
+    }
+    
+    .light-meals-page.active {
+      display: block;
+    }
+    
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .back-to-recipes {
+      display: inline-flex;
+      align-items: center;
+      color: #2ecc71;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .back-to-recipes:hover {
+      color: #27ae60;
+    }
+    
+    .back-to-recipes svg {
+      margin-right: 0.5rem;
+    }
+    
+    .favorites-btn {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: color 0.3s ease;
+    }
+    
+    .favorites-btn.active {
+      color: #f39c12;
+    }
+    
+    .favorites-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .favorites-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #e74c3c;
+      color: white;
+      font-size: 0.7rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* 菜谱网格样式 */
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    
+    .recipe-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    
+    .recipe-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .recipe-image-container {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .recipe-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .recipe-card:hover .recipe-image {
+      transform: scale(1.05);
+    }
+    
+    /* 悬停信息浮窗 */
+    .recipe-tooltip {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+      color: white;
+      padding: 1.5rem 1rem 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .recipe-card:hover .recipe-tooltip {
+      transform: translateY(0);
+    }
+    
+    .tooltip-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .tooltip-description {
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.9;
+    }
+    
+    .tooltip-nutrition {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+    
+    .tooltip-nutrition div {
+      text-align: center;
+    }
+    
+    .tooltip-value {
+      font-weight: 600;
+    }
+    
+    /* 菜谱卡片信息 */
+    .recipe-info {
+      padding: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .recipe-name {
+      font-size: 1.1rem;
+      color: #2c3e50;
+      margin: 0;
+    }
+    
+    .favorite-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: color 0.3s ease;
+    }
+    
+    .favorite-btn.active {
+      color: #f39c12;
+    }
+    
+    .favorite-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    /* 收藏菜谱弹窗 */
+    .favorites-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .favorites-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      padding: 2rem;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: color 0.3s ease;
+    }
+    
+    .close-modal:hover {
+      color: #e74c3c;
+    }
+    
+    .empty-favorites {
+      text-align: center;
+      padding: 3rem 0;
+      color: #7f8c8d;
+    }
+    
+    /* 菜谱详情弹窗 */
+    .recipe-detail-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .recipe-detail-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .detail-content {
+      background-color: white;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .detail-header {
+      height: 300px;
+      position: relative;
+    }
+    
+    .detail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .detail-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      color: white;
+      padding: 2rem;
+    }
+    
+    .detail-title h3 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .detail-meta {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .detail-body {
+      padding: 2rem;
+    }
+    
+    .detail-ingredients, .detail-instructions {
+      margin-bottom: 2rem;
+    }
+    
+    .detail-ingredients h4, .detail-instructions h4 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+    
+    .detail-ingredients ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .detail-ingredients li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    
+    .instruction-step {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .step-number {
+      background-color: #2ecc71;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="header-content">
+        <div class="brand">
+          <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          </div>
+          <h2 class="brand-title">Light Bites & <span>Bright Moments</span></h2>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="nutrition-page.html" class="nav-link">Nutrition</a></li>
+          <li class="nav-item"><a href="recipes-page.html" class="nav-link">Recipes</a></li>
+          <li class="nav-item"><a href="moments-page.html" class="nav-link">Moments</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="inner-page">
+    <div class="inner-hero">
+      <h1>Visual Recipes: Cook Like a Pro</h1>
+      <p>No more confusing instructions—follow along with real photos.</p>
+    </div>
+
+    <div class="content-section">
+      <div class="recipe-gallery">
+        <div class="recipe-step">
+          <img src="public/images/step1.jpg" alt="Step 1: Prep ingredients">
+          <p>Step 1: Gather 200g chicken breast, 1 cup spinach, ½ avocado, and 1 tbsp olive oil.</p>
+        </div>
+        <div class="recipe-step">
+          <img src="public/images/step2.jpg" alt="Step 2: Cook chicken">
+          <p>Step 2: Grill chicken over medium heat for 6-7 minutes per side until internal temp reaches 75°C.</p>
+        </div>
+        <div class="recipe-step">
+          <img src="public/images/step3.jpg" alt="Step 3: Assemble salad">
+          <p>Step 3: Slice chicken, arrange with spinach and avocado, drizzle with olive oil and lemon juice.</p>
+        </div>
+      </div>
+
+      <div class="recipe-details">
+        <h2>Grilled Chicken Avocado Salad</h2>
+        <div class="recipe-meta">
+          <span>⏱️ 15 mins</span>
+          <span>🔥 320 calories</span>
+          <span>🥗 Gluten-free</span>
+        </div>
+
+        <h3>Ingredients</h3>
+        <ul>
+          <li>200g boneless, skinless chicken breast</li>
+          <li>1 cup fresh spinach leaves</li>
+          <li>½ ripe avocado, sliced</li>
+          <li>1 tbsp extra virgin olive oil</li>
+          <li>1 tsp lemon juice</li>
+          <li>Salt and pepper to taste</li>
+        </ul>
+
+        <h3>Cooking Tips</h3>
+        <p>For a smoky flavor, add a pinch of paprika to the chicken before grilling. Substitute spinach with arugula for a peppery twist.</p>
+      </div>
+    </div>
+
+    <!-- 轻食菜谱模块入口 -->
+    <div class="light-meals-portal" id="lightMealsPortal">
+      <h2>More Light Meal Recipes</h2>
+      <p>Discover our collection of healthy, delicious light meals perfect for weight management and balanced nutrition. Each recipe includes detailed instructions and nutritional information.</p>
+      <a href="#" class="enter-recipes-btn" id="enterLightMeals">Explore Light Meal Recipes</a>
+    </div>
+
+    <!-- 轻食菜谱页面 -->
+    <div class="light-meals-page" id="lightMealsPage">
+      <div class="page-header">
+        <a href="#" class="back-to-recipes" id="backToRecipesMain">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Back to Recipes
+        </a>
+        
+        <button class="favorites-btn" id="favoritesBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="favorites-count" id="favoritesCount">0</span>
+        </button>
+      </div>
+      
+      <h2>Light Meal Recipes Collection</h2>
+      <p>Explore our selection of healthy, low-calorie recipes perfect for any meal of the day.</p>
+      
+      <div class="recipes-grid" id="recipesGrid">
+        <!-- 菜谱卡片将通过JavaScript动态生成 -->
+      </div>
+    </div>
+
+    <div class="related-section">
+      <h3>More Visual Recipes</h3>
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <img src="public/images/berry.jpg" alt="Berry Smoothie">
+          <h4>5-Minute Berry Smoothie Bowl</h4>
+        </a>
+        <a href="#" class="related-card">
+          <img src="public/images/quinoa.jpg" alt="Quinoa Bowl">
+          <h4>Mediterranean Quinoa Bowl</h4>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- 收藏菜谱弹窗 -->
+  <div class="favorites-modal" id="favoritesModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeFavoritesModal">&times;</button>
+      <h3>Your Favorite Recipes</h3>
+      <div class="recipes-grid" id="favoritesGrid">
+        <!-- 收藏的菜谱将在这里显示 -->
+        <div class="empty-favorites" id="emptyFavorites">
+          <p>You haven't saved any favorite recipes yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 菜谱详情弹窗 -->
+  <div class="recipe-detail-modal" id="recipeDetailModal">
+    <div class="detail-content">
+      <button class="close-modal" id="closeDetailModal">&times;</button>
+      <div class="detail-header">
+        <img src="" alt="" class="detail-image" id="detailImage">
+        <div class="detail-title">
+          <h3 id="detailTitle"></h3>
+          <div class="detail-meta" id="detailMeta">
+            <!-- 菜谱元数据将在这里显示 -->
+          </div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-ingredients">
+          <h4>Ingredients</h4>
+          <ul id="detailIngredients">
+            <!-- 食材列表将在这里显示 -->
+          </ul>
+        </div>
+        <div class="detail-instructions">
+          <h4>Instructions</h4>
+          <div id="detailInstructions">
+            <!-- 步骤说明将在这里显示 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-container">
+      <h3>About Light Bites & Bright Moments</h3>
+      <p>We are dedicated to providing visualized, science-backed fat-loss meal recipes, making healthy eating easy and enjoyable.</p>
+    </div>
+  </footer>
+
+  <script>
+    // 页面切换功能
+    const lightMealsPortal = document.getElementById('lightMealsPortal');
+    const lightMealsPage = document.getElementById('lightMealsPage');
+    const enterLightMeals = document.getElementById('enterLightMeals');
+    const backToRecipesMain = document.getElementById('backToRecipesMain');
+    const relatedSection = document.querySelector('.related-section');
+    const contentSection = document.querySelector('.content-section');
+    
+    // 点击进入轻食菜谱页面
+    enterLightMeals.addEventListener('click', (e) => {
+      e.preventDefault();
+      lightMealsPortal.style.display = 'none';
+      contentSection.style.display = 'none';
+      relatedSection.style.display = 'none';
+      lightMealsPage.classList.add('active');
+      // 生成菜谱卡片
+      generateRecipeCards();
+      // 更新收藏计数
+      updateFavoritesCount();
+    });
+    
+    // 返回主菜谱页面
+    backToRecipesMain.addEventListener('click', (e) => {
+      e.preventDefault();
+      lightMealsPage.classList.remove('active');
+      lightMealsPortal.style.display = 'block';
+      contentSection.style.display = 'block';
+      relatedSection.style.display = 'block';
+      // 清空菜谱卡片
+      document.getElementById('recipesGrid').innerHTML = '';
+    });
+
+    // 15种轻食菜谱数据
+    const lightMealsRecipes = [
+      {
+        id: 1,
+        name: "Mediterranean Chickpea Salad",
+        image: "public/images/Mediterranean Chickpea Salad.webp",
+        time: "15 mins",
+        calories: 280,
+        protein: 12,
+        carbs: 35,
+        fat: 10,
+        tags: ["Vegan", "Gluten-free"],
+        description: "A fresh salad with chickpeas, cucumber, tomatoes, and feta cheese tossed in olive oil and lemon dressing.",
+        ingredients: [
+          "1 cup canned chickpeas, drained and rinsed",
+          "½ cucumber, diced",
+          "1 cup cherry tomatoes, halved",
+          "¼ red onion, thinly sliced",
+          "2 tbsp feta cheese, crumbled",
+          "2 tbsp fresh parsley, chopped",
+          "1 tbsp olive oil",
+          "1 tsp lemon juice",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "In a large bowl, combine chickpeas, cucumber, tomatoes, and red onion.",
+          "In a small bowl, whisk together olive oil, lemon juice, salt, and pepper.",
+          "Pour dressing over the salad and toss to combine.",
+          "Top with crumbled feta cheese and fresh parsley before serving."
+        ]
+      },
+      {
+        id: 2,
+        name: "Grilled Salmon with Asparagus",
+        image: "public/images/Grilled Salmon with Asparagus.webp",
+        time: "20 mins",
+        calories: 320,
+        protein: 34,
+        carbs: 6,
+        fat: 18,
+        tags: ["Gluten-free", "High protein"],
+        description: "Perfectly grilled salmon fillet served with roasted asparagus spears and lemon wedges.",
+        ingredients: [
+          "1 salmon fillet (150g)",
+          "10 asparagus spears, trimmed",
+          "1 tsp olive oil",
+          "1 garlic clove, minced",
+          "Lemon wedges for serving",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Preheat grill to medium-high heat.",
+          "Toss asparagus with olive oil, garlic, salt, and pepper.",
+          "Grill salmon for 4-5 minutes per side until flaky.",
+          "Grill asparagus for 5-7 minutes until tender-crisp.",
+          "Serve salmon with asparagus and lemon wedges."
+        ]
+      },
+      {
+        id: 3,
+        name: "Quinoa Veggie Stir Fry",
+        image: "public/images/Quinoa Veggie Stir Fry.jpg",
+        time: "25 mins",
+        calories: 350,
+        protein: 14,
+        carbs: 45,
+        fat: 12,
+        tags: ["Vegetarian", "Gluten-free"],
+        description: "A colorful stir fry with quinoa, mixed vegetables, and a light soy-ginger sauce.",
+        ingredients: [
+          "½ cup cooked quinoa",
+          "1 cup mixed vegetables (bell peppers, carrots, snap peas)",
+          "1 tbsp sesame oil",
+          "1 garlic clove, minced",
+          "1 tsp ginger, grated",
+          "1 tbsp low-sodium soy sauce",
+          "1 tsp rice vinegar",
+          "1 tsp honey or maple syrup",
+          "Sesame seeds for garnish"
+        ],
+        instructions: [
+          "Heat sesame oil in a pan over medium heat.",
+          "Add garlic and ginger, sauté for 30 seconds.",
+          "Add vegetables and stir fry for 5-7 minutes until tender-crisp.",
+          "In a small bowl, mix soy sauce, rice vinegar, and honey.",
+          "Add cooked quinoa and sauce to the pan, toss to combine.",
+          "Garnish with sesame seeds before serving."
+        ]
+      },
+      {
+        id: 4,
+        name: "Greek Yogurt Parfait",
+        image: "public/images/Greek Yogurt Parfait.jpg",
+        time: "10 mins",
+        calories: 220,
+        protein: 18,
+        carbs: 25,
+        fat: 6,
+        tags: ["Breakfast", "High protein"],
+        description: "Layers of Greek yogurt, fresh berries, and granola for a nutritious breakfast or snack.",
+        ingredients: [
+          "1 cup non-fat Greek yogurt",
+          "½ cup mixed berries (strawberries, blueberries)",
+          "¼ cup low-sugar granola",
+          "1 tsp honey",
+          "1 tbsp chia seeds"
+        ],
+        instructions: [
+          "In a glass or bowl, add half the yogurt.",
+          "Top with half the berries and granola.",
+          "Add remaining yogurt, then remaining berries and granola.",
+          "Drizzle with honey and sprinkle chia seeds on top."
+        ]
+      },
+      {
+        id: 5,
+        name: "Turkey Vegetable Wrap",
+        image: "public/images/Turkey Vegetable Wrap.jpg",
+        time: "10 mins",
+        calories: 310,
+        protein: 28,
+        carbs: 35,
+        fat: 8,
+        tags: ["Lunch", "High protein"],
+        description: "A whole grain wrap filled with lean turkey, fresh vegetables, and hummus.",
+        ingredients: [
+          "1 whole grain tortilla wrap",
+          "80g sliced lean turkey breast",
+          "½ cup shredded lettuce",
+          "¼ avocado, sliced",
+          "1 tbsp hummus",
+          "1 slice tomato",
+          "1 tsp mustard",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Lay the tortilla flat on a plate.",
+          "Spread hummus and mustard evenly over the tortilla.",
+          "Layer turkey, lettuce, tomato, and avocado.",
+          "Season with salt and pepper.",
+          "Roll up tightly and cut in half diagonally."
+        ]
+      },
+      {
+        id: 6,
+        name: "Zucchini Noodles with Pesto",
+        image: "public/images/Zucchini Noodles with Pesto.webp",
+        time: "15 mins",
+        calories: 250,
+        protein: 8,
+        carbs: 12,
+        fat: 20,
+        tags: ["Low carb", "Vegetarian"],
+        description: "Zucchini noodles tossed in a fresh basil pesto sauce with cherry tomatoes.",
+        ingredients: [
+          "2 medium zucchinis, spiralized",
+          "¼ cup fresh basil pesto",
+          "½ cup cherry tomatoes, halved",
+          "1 tbsp pine nuts",
+          "Grated Parmesan cheese (optional)",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Heat a pan over medium heat. Add spiralized zucchini and sauté for 2-3 minutes until just tender.",
+          "Add pesto and cherry tomatoes, toss to coat.",
+          "Season with salt and pepper.",
+          "Serve topped with pine nuts and Parmesan cheese if desired."
+        ]
+      },
+      {
+        id: 7,
+        name: "Veggie Omelette",
+        image: "public/images/Veggie Omelette.jpg",
+        time: "10 mins",
+        calories: 210,
+        protein: 18,
+        carbs: 5,
+        fat: 13,
+        tags: ["Breakfast", "High protein"],
+        description: "A fluffy omelette filled with spinach, mushrooms, and bell peppers.",
+        ingredients: [
+          "3 eggs",
+          "2 tbsp milk",
+          "½ cup fresh spinach",
+          "¼ cup mushrooms, sliced",
+          "¼ cup bell pepper, diced",
+          "1 tbsp olive oil",
+          "Salt and pepper to taste",
+          "1 tbsp feta cheese (optional)"
+        ],
+        instructions: [
+          "Whisk eggs and milk together in a bowl, season with salt and pepper.",
+          "Heat olive oil in a non-stick pan over medium heat.",
+          "Sauté mushrooms and bell pepper for 2-3 minutes.",
+          "Add spinach and cook until wilted.",
+          "Pour egg mixture over vegetables.",
+          "Cook until almost set, then sprinkle with feta if using.",
+          "Fold omelette in half and cook until eggs are fully set."
+        ]
+      },
+      {
+        id: 8,
+        name: "Lentil Soup",
+        image: "public/images/Lentil Soup.jpg",
+        time: "35 mins",
+        calories: 230,
+        protein: 12,
+        carbs: 38,
+        fat: 3,
+        tags: ["Vegan", "Soup", "High fiber"],
+        description: "A hearty soup made with lentils, carrots, celery, and aromatic spices.",
+        ingredients: [
+          "1 cup dried brown lentils, rinsed",
+          "1 carrot, diced",
+          "1 celery stalk, diced",
+          "½ onion, diced",
+          "2 garlic cloves, minced",
+          "4 cups vegetable broth",
+          "1 tsp cumin",
+          "1 bay leaf",
+          "1 tbsp olive oil",
+          "Salt and pepper to taste",
+          "Fresh parsley for garnish"
+        ],
+        instructions: [
+          "Heat olive oil in a large pot over medium heat. Sauté onion, carrot, and celery for 5-7 minutes.",
+          "Add garlic, cumin, salt, and pepper, cook for 1 minute.",
+          "Add lentils, vegetable broth, and bay leaf. Bring to a boil.",
+          "Reduce heat and simmer for 25-30 minutes until lentils are tender.",
+          "Remove bay leaf. Garnish with fresh parsley before serving."
+        ]
+      },
+      {
+        id: 9,
+        name: "Berry Smoothie Bowl",
+        image: "public/images/Berry Smoothie Bowl.webp",
+        time: "5 mins",
+        calories: 290,
+        protein: 8,
+        carbs: 55,
+        fat: 6,
+        tags: ["Breakfast", "Vegan option"],
+        description: "A thick and creamy smoothie bowl topped with fresh fruit and granola.",
+        ingredients: [
+          "1 cup frozen mixed berries",
+          "½ frozen banana",
+          "¼ cup almond milk (or milk of choice)",
+          "1 tbsp almond butter",
+          "Toppings: fresh berries, granola, chia seeds, coconut flakes"
+        ],
+        instructions: [
+          "Combine frozen berries, banana, almond milk, and almond butter in a blender.",
+          "Blend until smooth and thick, adding more almond milk if needed.",
+          "Pour into a bowl.",
+          "Arrange toppings on top and serve immediately."
+        ]
+      },
+      {
+        id: 10,
+        name: "Baked Chicken with Sweet Potato",
+        image: "public/images/Baked Chicken with Sweet Potato.jpg",
+        time: "35 mins",
+        calories: 380,
+        protein: 35,
+        carbs: 30,
+        fat: 12,
+        tags: ["Dinner", "Gluten-free"],
+        description: "Juicy baked chicken breast served with roasted sweet potato and steamed broccoli.",
+        ingredients: [
+          "1 chicken breast (150g)",
+          "1 medium sweet potato, cubed",
+          "1 cup broccoli florets",
+          "1 tbsp olive oil",
+          "1 tsp paprika",
+          "½ tsp garlic powder",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Preheat oven to 200°C (400°F).",
+          "Toss sweet potato cubes with ½ tbsp olive oil, salt, and pepper. Spread on a baking sheet.",
+          "Bake sweet potatoes for 15 minutes.",
+          "Rub chicken with remaining olive oil, paprika, garlic powder, salt, and pepper.",
+          "Add chicken to the baking sheet with sweet potatoes and bake for another 20 minutes until chicken is cooked through.",
+          "Steam broccoli for 5-7 minutes until tender-crisp.",
+          "Serve chicken with sweet potatoes and broccoli."
+        ]
+      },
+      {
+        id: 11,
+        name: "Caprese Salad Skewers",
+        image: "public/images/Caprese Salad Skewers.webp",
+        time: "10 mins",
+        calories: 180,
+        protein: 8,
+        carbs: 6,
+        fat: 14,
+        tags: ["Appetizer", "Gluten-free"],
+        description: "Fresh mozzarella, tomato, and basil skewers drizzled with balsamic glaze.",
+        ingredients: [
+          "10 cherry tomatoes",
+          "10 small fresh mozzarella balls",
+          "10 fresh basil leaves",
+          "2 tbsp balsamic glaze",
+          "1 tbsp olive oil",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "Thread a tomato, basil leaf, and mozzarella ball onto each toothpick or small skewer.",
+          "Arrange skewers on a plate.",
+          "Drizzle with olive oil and balsamic glaze.",
+          "Season with a pinch of salt and pepper before serving."
+        ]
+      },
+      {
+        id: 12,
+        name: "Tuna Salad Lettuce Wraps",
+        image: "public/images/Tuna Salad Lettuce Wraps.webp",
+        time: "10 mins",
+        calories: 240,
+        protein: 25,
+        carbs: 8,
+        fat: 10,
+        tags: ["Lunch", "Low carb", "High protein"],
+        description: "Light tuna salad served in crisp lettuce cups for a low-carb option.",
+        ingredients: [
+          "1 can (120g) light tuna in water, drained",
+          "1 tbsp Greek yogurt (instead of mayo)",
+          "1 celery stalk, finely diced",
+          "1 tsp Dijon mustard",
+          "6 large lettuce leaves (butter or romaine)",
+          "¼ avocado, diced",
+          "Lemon juice to taste",
+          "Salt and pepper to taste"
+        ],
+        instructions: [
+          "In a bowl, mix tuna, Greek yogurt, celery, and Dijon mustard.",
+          "Add lemon juice, salt, and pepper to taste.",
+          "Wash and dry lettuce leaves.",
+          "Spoon tuna mixture into lettuce leaves.",
+          "Top with diced avocado and serve."
+        ]
+      },
+      {
+        id: 13,
+        name: "Chia Pudding",
+        image: "public/images/Chia Pudding.webp",
+        time: "10 mins + overnight",
+        calories: 270,
+        protein: 7,
+        carbs: 28,
+        fat: 15,
+        tags: ["Breakfast", "Vegan option", "Gluten-free"],
+        description: "Creamy chia seed pudding infused with vanilla and topped with fresh fruit.",
+        ingredients: [
+          "3 tbsp chia seeds",
+          "1 cup almond milk (or milk of choice)",
+          "1 tsp vanilla extract",
+          "1 tsp honey or maple syrup",
+          "Toppings: fresh berries, sliced banana, unsweetened coconut flakes"
+        ],
+        instructions: [
+          "In a jar or container, mix chia seeds, almond milk, vanilla, and sweetener.",
+          "Stir well, then let sit for 5 minutes and stir again to prevent clumping.",
+          "Cover and refrigerate overnight or at least 4 hours.",
+          "Stir pudding before serving and add toppings of your choice."
+        ]
+      },
+      {
+        id: 14,
+        name: "Vegetable Fried Rice",
+        image: "public/images/Vegetable Fried Rice.jpg",
+        time: "20 mins",
+        calories: 320,
+        protein: 8,
+        carbs: 55,
+        fat: 8,
+        tags: ["Vegetarian", "Lunch", "Dinner"],
+        description: "A light version of fried rice with mixed vegetables and scrambled egg.",
+        ingredients: [
+          "1 cup cooked brown rice, cooled",
+          "1 egg, beaten",
+          "½ cup mixed vegetables (peas, carrots, corn)",
+          "1 tbsp sesame oil",
+          "1 garlic clove, minced",
+          "1 tbsp low-sodium soy sauce",
+          "1 tsp rice vinegar",
+          "Green onions, sliced for garnish"
+        ],
+        instructions: [
+          "Heat ½ tbsp sesame oil in a pan over medium heat.",
+          "Add beaten egg and scramble until cooked. Remove from pan and set aside.",
+          "Add remaining sesame oil to the pan. Sauté garlic for 30 seconds.",
+          "Add mixed vegetables and cook for 3-4 minutes.",
+          "Add cooked rice, breaking up any clumps.",
+          "Stir in soy sauce and rice vinegar.",
+          "Add scrambled egg back to the pan and mix well.",
+          "Garnish with green onions before serving."
+        ]
+      },
+      {
+        id: 15,
+        name: "Stuffed Bell Peppers",
+        image: "public/images/Stuffed Bell Peppers.jpg",
+        time: "40 mins",
+        calories: 340,
+        protein: 18,
+        carbs: 45,
+        fat: 10,
+        tags: ["Dinner", "Gluten-free"],
+        description: "Bell peppers stuffed with a mixture of ground turkey, quinoa, and vegetables.",
+        ingredients: [
+          "2 medium bell peppers, halved and seeded",
+          "100g lean ground turkey",
+          "½ cup cooked quinoa",
+          "½ cup diced tomatoes",
+          "¼ cup onion, diced",
+          "1 garlic clove, minced",
+          "1 tsp Italian seasoning",
+          "2 tbsp tomato sauce",
+          "1 tbsp olive oil",
+          "Salt and pepper to taste",
+          "Shredded mozzarella cheese (optional)"
+        ],
+        instructions: [
+          "Preheat oven to 190°C (375°F).",
+          "Place bell pepper halves cut-side up in a baking dish. Set aside.",
+          "Heat olive oil in a pan over medium heat. Sauté onion for 3-4 minutes.",
+          "Add ground turkey and cook until browned, breaking up with a spoon.",
+          "Add garlic, Italian seasoning, salt, and pepper. Cook for 1 minute.",
+          "Stir in cooked quinoa, diced tomatoes, and tomato sauce.",
+          "Spoon mixture into bell pepper halves.",
+          "Cover and bake for 30 minutes.",
+          "If using cheese, sprinkle on top and bake uncovered for another 5 minutes until cheese melts."
+        ]
+      }
+    ];
+
+    // 从本地存储获取收藏的菜谱
+    function getFavorites() {
+      const favorites = localStorage.getItem('recipeFavorites');
+      return favorites ? JSON.parse(favorites) : [];
+    }
+
+    // 保存收藏的菜谱到本地存储
+    function saveFavorites(favorites) {
+      localStorage.setItem('recipeFavorites', JSON.stringify(favorites));
+      updateFavoritesCount();
+      renderFavorites();
+    }
+
+    // 更新收藏计数
+    function updateFavoritesCount() {
+      const favorites = getFavorites();
+      document.getElementById('favoritesCount').textContent = favorites.length;
+    }
+
+    // 切换菜谱收藏状态
+    function toggleFavorite(recipeId) {
+      const favorites = getFavorites();
+      const index = favorites.indexOf(recipeId);
+      
+      if (index === -1) {
+        // 添加到收藏
+        favorites.push(recipeId);
+      } else {
+        // 从收藏中移除
+        favorites.splice(index, 1);
+      }
+      
+      saveFavorites(favorites);
+      
+      // 更新UI中的收藏按钮状态
+      const favoriteButtons = document.querySelectorAll(`.favorite-btn[data-id="${recipeId}"]`);
+      favoriteButtons.forEach(btn => {
+        if (favorites.includes(recipeId)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // 生成菜谱卡片
+    function generateRecipeCards() {
+      const recipesGrid = document.getElementById('recipesGrid');
+      const favorites = getFavorites();
+      
+      // 清空网格
+      recipesGrid.innerHTML = '';
+      
+      // 遍历所有菜谱数据
+      lightMealsRecipes.forEach(recipe => {
+        const isFavorite = favorites.includes(recipe.id);
+        
+        // 创建菜谱卡片元素
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        card.setAttribute('data-id', recipe.id);
+        
+        // 设置卡片内容
+        card.innerHTML = `
+          <div class="recipe-image-container">
+            <img src="${recipe.image}" alt="${recipe.name}" class="recipe-image">
+            <div class="recipe-tooltip">
+              <h4 class="tooltip-title">${recipe.name}</h4>
+              <p class="tooltip-description">${recipe.description}</p>
+              <div class="tooltip-nutrition">
+                <div>
+                  <div class="tooltip-value">${recipe.calories}kcal</div>
+                  <div>Calories</div>
+                </div>
+                <div>
+                  <div class="tooltip-value">${recipe.protein}g</div>
+                  <div>Protein</div>
+                </div>
+                <div>
+                  <div class="tooltip-value">${recipe.carbs}g</div>
+                  <div>Carbs</div>
+                </div>
+                <div>
+                  <div class="tooltip-value">${recipe.fat}g</div>
+                  <div>Fat</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="recipe-info">
+            <h3 class="recipe-name">${recipe.name}</h3>
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${recipe.id}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+        `;
+        
+        // 添加到网格中
+        recipesGrid.appendChild(card);
+        
+        // 为收藏按钮添加点击事件
+        card.querySelector('.favorite-btn').addEventListener('click', (e) => {
+          e.stopPropagation(); // 防止触发卡片点击事件
+          toggleFavorite(recipe.id);
+        });
+        
+        // 为卡片添加点击事件以查看详情
+        card.addEventListener('click', () => {
+          showRecipeDetails(recipe.id);
+        });
+      });
+    }
+
+    // 渲染收藏的菜谱
+    function renderFavorites() {
+      const favoritesGrid = document.getElementById('favoritesGrid');
+      const favorites = getFavorites();
+      const emptyMessage = document.getElementById('emptyFavorites');
+      
+      // 清空网格
+      favoritesGrid.innerHTML = '';
+      
+      // 显示或隐藏空收藏消息
+      if (favorites.length === 0) {
+        emptyMessage.style.display = 'block';
+        return;
+      } else {
+        emptyMessage.style.display = 'none';
+      }
+      
+      // 只显示收藏的菜谱
+      lightMealsRecipes.forEach(recipe => {
+        if (favorites.includes(recipe.id)) {
+          const isFavorite = true;
+          
+          // 创建菜谱卡片元素
+          const card = document.createElement('div');
+          card.className = 'recipe-card';
+          card.setAttribute('data-id', recipe.id);
+          
+          // 设置卡片内容
+          card.innerHTML = `
+            <div class="recipe-image-container">
+              <img src="${recipe.image}" alt="${recipe.name}" class="recipe-image">
+              <div class="recipe-tooltip">
+                <h4 class="tooltip-title">${recipe.name}</h4>
+                <p class="tooltip-description">${recipe.description}</p>
+                <div class="tooltip-nutrition">
+                  <div>
+                    <div class="tooltip-value">${recipe.calories}kcal</div>
+                    <div>Calories</div>
+                  </div>
+                  <div>
+                    <div class="tooltip-value">${recipe.protein}g</div>
+                    <div>Protein</div>
+                  </div>
+                  <div>
+                    <div class="tooltip-value">${recipe.carbs}g</div>
+                    <div>Carbs</div>
+                  </div>
+                  <div>
+                    <div class="tooltip-value">${recipe.fat}g</div>
+                    <div>Fat</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="recipe-info">
+              <h3 class="recipe-name">${recipe.name}</h3>
+              <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${recipe.id}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+            </div>
+          `;
+          
+          // 添加到收藏网格中
+          favoritesGrid.appendChild(card);
+          
+          // 为收藏按钮添加点击事件
+          card.querySelector('.favorite-btn').addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止触发卡片点击事件
+            toggleFavorite(recipe.id);
+          });
+          
+          // 为卡片添加点击事件以查看详情
+          card.addEventListener('click', () => {
+            showRecipeDetails(recipe.id);
+            // 关闭收藏弹窗
+            document.getElementById('favoritesModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+          });
+        }
+      });
+    }
+
+    // 显示菜谱详情
+    function showRecipeDetails(recipeId) {
+      const recipe = lightMealsRecipes.find(r => r.id === recipeId);
+      if (!recipe) return;
+      
+      // 填充详情数据
+      document.getElementById('detailImage').src = recipe.image;
+      document.getElementById('detailImage').alt = recipe.name;
+      document.getElementById('detailTitle').textContent = recipe.name;
+      
+      // 构建元数据
+      let metaHtml = `<span>⏱️ ${recipe.time}</span>`;
+      metaHtml += `<span>🔥 ${recipe.calories} calories</span>`;
+      recipe.tags.forEach(tag => {
+        metaHtml += `<span>• ${tag}</span>`;
+      });
+      document.getElementById('detailMeta').innerHTML = metaHtml;
+      
+      // 构建食材列表
+      let ingredientsHtml = '';
+      recipe.ingredients.forEach(ingredient => {
+        ingredientsHtml += `<li>• ${ingredient}</li>`;
+      });
+      document.getElementById('detailIngredients').innerHTML = ingredientsHtml;
+      
+      // 构建步骤说明
+      let instructionsHtml = '';
+      recipe.instructions.forEach((instruction, index) => {
+        instructionsHtml += `
+          <div class="instruction-step">
+            <div class="step-number">${index + 1}</div>
+            <p>${instruction}</p>
+          </div>
+        `;
+      });
+      document.getElementById('detailInstructions').innerHTML = instructionsHtml;
+      
+      // 显示详情弹窗
+      document.getElementById('recipeDetailModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // 收藏按钮点击事件
+    document.getElementById('favoritesBtn').addEventListener('click', () => {
+      document.getElementById('favoritesModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      renderFavorites();
+    });
+
+    // 关闭收藏弹窗
+    document.getElementById('closeFavoritesModal').addEventListener('click', () => {
+      document.getElementById('favoritesModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // 点击弹窗外部关闭收藏弹窗
+    document.getElementById('favoritesModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('favoritesModal')) {
+        document.getElementById('favoritesModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // 关闭菜谱详情弹窗
+    document.getElementById('closeDetailModal').addEventListener('click', () => {
+      document.getElementById('recipeDetailModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // 点击弹窗外部关闭菜谱详情弹窗
+    document.getElementById('recipeDetailModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('recipeDetailModal')) {
+        document.getElementById('recipeDetailModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // 页面加载时初始化收藏计数
+    document.addEventListener('DOMContentLoaded', () => {
+      updateFavoritesCount();
+    });
+  </script>
+</body>
+</html>
