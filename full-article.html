@@ -9,24 +9,8 @@
   <link rel="icon" href="favicon.ico">
 </head>
 <body>
-  <!-- 复用头部导航 -->
-  <header class="header">
-    <div class="header-container">
-      <div class="header-content">
-        <div class="brand">
-          <div class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
-          </div>
-          <h2 class="brand-title">Light Bites & <span>Bright Moments</span></h2>
-        </div>
-        <ul class="nav-menu">
-          <li class="nav-item"><a href="nutrition-page.html" class="nav-link">Nutrition</a></li>
-          <li class="nav-item"><a href="recipes-page.html" class="nav-link">Recipes</a></li>
-          <li class="nav-item"><a href="moments-page.html" class="nav-link">Moments</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
+  <!-- site navigation will be injected here -->
+  <div id="site-nav"></div>
 
   <main class="inner-page">
     <!-- 文章标题区 -->
@@ -115,6 +99,7 @@
     </div>
   </footer>
 
+  <script src="load-nav.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

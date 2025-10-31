@@ -40,11 +40,27 @@ body {
     font-size: 28px;
     font-weight: 700;
     color: #333;
+    text-decoration: none;
     letter-spacing: -0.5px;
 }
 
 .brand-title span {
     color: #ff6b6b;
+}
+
+/* Make sure the site title link has no underline and is accessible */
+.brand-heading a {
+    text-decoration: none;
+    color: inherit;
+}
+.brand-heading a:hover,
+.brand-heading a:focus {
+    text-decoration: none;
+    color: inherit;
+}
+.brand-heading a:focus-visible {
+    outline: 3px solid rgba(255,107,107,0.25);
+    outline-offset: 3px;
 }
 
 .nav-menu {
