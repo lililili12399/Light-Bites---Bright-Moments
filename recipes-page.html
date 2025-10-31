@@ -550,6 +550,8 @@
       contentSection.style.display = 'none';
       relatedSection.style.display = 'none';
       lightMealsPage.classList.add('active');
+      // 确保页面从顶端开始显示轻食菜谱
+      try{ window.scrollTo({ top: 0, behavior: 'smooth' }); }catch(_){ window.scrollTo(0,0); }
       // 生成菜谱卡片
       generateRecipeCards();
       // 更新收藏计数
@@ -563,6 +565,8 @@
       lightMealsPortal.style.display = 'block';
       contentSection.style.display = 'block';
       relatedSection.style.display = 'block';
+      // 返回时滚动到页面顶端，避免停在底部
+      try{ window.scrollTo({ top: 0, behavior: 'smooth' }); }catch(_){ window.scrollTo(0,0); }
       // 清空菜谱卡片
       document.getElementById('recipesGrid').innerHTML = '';
     });
